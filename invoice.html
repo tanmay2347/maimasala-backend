@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tax Invoice - MaiMasala</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #555; margin: 0; padding: 20px; }
+        .invoice-box { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 0 15px rgba(0,0,0,0.2); }
+        .invoice-header { display: flex; justify-content: space-between; border-bottom: 2px solid #eee; padding-bottom: 20px; margin-bottom: 20px; }
+        .company-details h1 { color: #d32f2f; margin: 0; }
+        .invoice-details { text-align: right; }
+        .customer-info { margin-bottom: 20px; background: #f9f9f9; padding: 15px; border-radius: 6px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        table th, table td { padding: 10px; border-bottom: 1px solid #ddd; text-align: left; }
+        table th { background: #f1f1f1; }
+        .total-section { text-align: right; font-size: 18px; font-weight: bold; }
+        .print-btn-container { text-align: center; margin-top: 20px; }
+        .print-btn { background: #2e7d32; color: white; border: none; padding: 10px 20px; font-size: 16px; border-radius: 5px; cursor: pointer; }
+        @media print {
+            body { background: white; padding: 0; }
+            .invoice-box { box-shadow: none; padding: 0; }
+            .print-btn-container { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="invoice-box">
+        <div class="invoice-header">
+            <div class="company-details">
+                <h1> MaiMasala</h1>
+                <p>100% Pure & Organic Spices Store<br>Amravati, Maharashtra, India</p>
+            </div>
+            <div class="invoice-details">
+                <h2>TAX INVOICE</h2>
+                <p><strong>Order ID:</strong> <span id="invId">Loading...</span></p>
+                <p><strong>Date:</strong> <span id="invDate">Loading...</span></p>
+            </div>
+        </div>
+
+        <div class="customer-info" id="customerInfo">
+            <p><strong>Customer Name:</strong> Loading...</p>
+            <p><strong>Phone:</strong> Loading...</p>
+            <p><strong>Delivery Address:</strong> Loading...</p>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Item Description</th>
+                    <th>Price</th>
+                    <th>Qty</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody id="invoiceItems">
+                <!-- Dynamically filled -->
+            </tbody>
+        </table>
+
+        <div class="total-section">
+            <p>Grand Total: ₹<span id="invTotal">0</span></p>
+        </div>
+
+        <div class="print-btn-container">
+            <button class="print-btn" onclick="window.print()">🖨️ Print Invoice</button>
+        </div>
+    </div>
+
+    <script>
+        async function loadInvoice() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get("id");
+            const shouldPrint = urlParams.get("print");
+
+            if (!orderId) {
+                alert("Invalid Invoice ID");
+                return;
+            }
+
+            try {
+                const res = await fetch(`https://maimasala-backend.onrender.com/api/orders`);
+                const orders = await res.json();
+                const order = orders.find(o => o._id === orderId);
+
+                if (!order) {
+                    alert("Order not found");
+                    return;
+                }
+
+                document.getElementById("invId").innerText = order._id.slice(-6).toUpperCase();
+                document.getElementById("invDate").innerText = new Date(order.createdAt).toLocaleDateString();
+                
+                document.getElementById("customerInfo").innerHTML = `
+                    <p><strong>Customer Name:</strong> ${order.customerName}</p>
+                    <p><strong>Phone:</strong> ${order.phone}</p>
+                    <p><strong>Delivery Address:</strong> ${order.address}</p>
+                    <p><strong>Payment Mode:</strong> ${order.paymentMethod || 'COD'} (${order.paymentStatus || 'Pending'})</p>
+                `;
+
+                const itemsTable = document.getElementById("invoiceItems");
+                itemsTable.innerHTML = "";
+
+                order.products.forEach(p => {
+                    const qty = p.qty || 1;
+                    itemsTable.innerHTML += `
+                        <tr>
+                            <td>${p.name}</td>
+                            <td>₹${p.price}</td>
+                            <td>${qty}</td>
+                            <td>₹${p.price * qty}</td>
+                        </tr>
+                    `;
+                });
+
+                document.getElementById("invTotal").innerText = order.total;
+
+                if (shouldPrint === "true") {
+                    setTimeout(() => window.print(), 500);
+                }
+
+            } catch (err) {
+                console.error("Invoice load error:", err);
+            }
+        }
+
+        loadInvoice();
+    </script>
+</body>
+</html>

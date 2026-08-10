@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - MaiMasala</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Header / Navbar -->
+    <header class="navbar">
+        <div class="navbar-top">
+            <div class="nav-left">
+                <button class="hamburger-btn" id="menuToggleBtn" onclick="toggleMenu()">☰</button>
+            </div>
+            <div class="logo">
+                <span>MaiMasala</span>
+                <img src="images/logo.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+            </div>
+        </div>
+
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search masalas...">
+        </div>
+
+        <div class="navbar-bottom">
+            <a href="cart.html" class="cart-btn-link">🛒 Cart (<span id="cartCount">0</span>)</a>
+            <div class="nav-right" id="authSection"></div>
+        </div>
+
+        <!-- Slide-out Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <div class="menu-header">
+                <h3>MaiMasala Menu</h3>
+                <button class="close-menu-btn" onclick="toggleMenu()">✕</button>
+            </div>
+            <ul class="menu-links">
+                <li><a href="index.html">🏠 Home</a></li>
+                <li><a href="orders.html">📦 My Orders</a></li>
+                <li><a href="cart.html">🛒 My Cart</a></li>
+                <hr>
+                <li><a href="about.html">ℹ️ About Us</a></li>
+                <li><a href="contact.html">📞 Contact Us</a></li>
+                <li><a href="terms.html">📜 Terms & Conditions</a></li>
+            </ul>
+        </div>
+        <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container" style="background: white; padding: 30px; border-radius: 10px; margin-top: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+        <h1 style="color: #d32f2f; margin-bottom: 15px;">About MaiMasala 🌶️</h1>
+        <p style="line-height: 1.6; color: #555; margin-bottom: 15px;">
+            Welcome to <strong>MaiMasala</strong>, your ultimate destination for 100% pure, authentic, and traditional home-ground Indian spices. We bring the rich aroma and authentic taste of ancient recipes straight to your kitchen.
+        </p>
+        <p style="line-height: 1.6; color: #555; margin-bottom: 15px;">
+            Our mission is to ensure every meal you cook is packed with health, purity, and unmatched flavor, free from any artificial colors or preservatives.
+        </p>
+        <a href="index.html" style="display: inline-block; background: #d32f2f; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; margin-top: 10px;">
+            🛍️ Explore Our Spices
+        </a>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

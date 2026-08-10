@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details - MaiMasala</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .product-detail-container {
+            max-width: 1000px; margin: 40px auto; background: white; padding: 30px;
+            border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); display: flex; gap: 40px; align-items: flex-start;
+        }
+
+        .detail-image-box { flex: 1; text-align: center; }
+        .detail-image-box img {
+            width: 100%; max-width: 380px; height: 380px; object-fit: cover; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .detail-info-box { flex: 1.2; }
+        .detail-info-box h1 { font-size: 28px; color: #222; margin-bottom: 10px; }
+        .detail-price { font-size: 24px; font-weight: bold; color: #2e7d32; margin-bottom: 15px; }
+
+        .detail-desc {
+            font-size: 14px; color: #555; line-height: 1.6; margin-bottom: 15px; background: #fafafa; padding: 12px; border-left: 4px solid #d32f2f; border-radius: 4px;
+        }
+
+        .recipe-card {
+            background: #fff8e1; border: 1px solid #ffe082; border-radius: 8px; padding: 15px; margin-bottom: 20px;
+        }
+        .recipe-card h4 { margin: 0 0 6px 0; color: #e65100; font-size: 15px; }
+        .recipe-card p { margin: 0; font-size: 13px; color: #444; }
+
+        .notify-card {
+            background: #e3f2fd; border: 1px solid #90caf9; border-radius: 8px; padding: 15px; margin-bottom: 20px;
+        }
+        .notify-card h4 { margin: 0 0 8px 0; color: #0d47a1; font-size: 15px; }
+
+        .qty-selector { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .qty-input-box { display: flex; align-items: center; border: 1px solid #ccc; border-radius: 6px; overflow: hidden; }
+        .qty-btn-btn { background: #eee; border: none; padding: 8px 16px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        .qty-val { padding: 8px 16px; font-weight: bold; }
+
+        .detail-btn-group { display: flex; gap: 15px; }
+        .btn-add-cart, .btn-buy-now {
+            flex: 1; padding: 14px; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer;
+        }
+        .btn-add-cart { background-color: #f57c00; color: white; }
+        .btn-buy-now { background-color: #2e7d32; color: white; }
+
+        @media (max-width: 768px) {
+            .product-detail-container { flex-direction: column; padding: 20px; }
+            .detail-image-box img { height: 260px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="nav-left">
+            <button class="hamburger-btn" onclick="toggleMenu()">☰</button>
+            <div class="logo">🌶️ MaiMasala</div>
+        </div>
+        <div class="nav-right">
+            <a href="cart.html" class="cart-btn-link">🛒 Cart (<span id="cartCount">0</span>)</a>
+        </div>
+    </header>
+
+    <div class="product-detail-container">
+        <!-- Image -->
+        <div class="detail-image-box">
+            <img id="detailImg" src="" alt="Product Image" onerror="this.src='https://via.placeholder.com/380'">
+        </div>
+
+        <!-- Info -->
+        <div class="detail-info-box">
+            <h1 id="detailTitle">Loading...</h1>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="font-weight: bold; display: block; margin-bottom: 5px; color: #333;">Select Pack Size:</label>
+                <select id="detailWeightSelect" style="width: 100%; max-width: 280px; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer;">
+                </select>
+            </div>
+
+            <p class="detail-price" id="detailPrice">₹0</p>
+            <p class="detail-desc" id="detailDesc">Loading details...</p>
+
+            <!-- Recipe Card -->
+            <div class="recipe-card">
+                <h4>🥘 Best Used For:</h4>
+                <p id="detailUsage" style="margin-bottom:8px;"></p>
+                <h4>💡 Chef's Cooking Tip:</h4>
+                <p id="detailRecipe"></p>
+            </div>
+
+            <!-- 🔔 BACK IN STOCK AUTO-DETECT NOTIFY BOX -->
+            <div id="notifyBox" class="notify-card" style="display: none;">
+                <h4>🔔 Out of Stock! Get Notified Instantly:</h4>
+                <p id="notifySubText" style="font-size:12px; color:#555; margin-bottom:10px;">Stock aate hi aapko alert bhej diya jayega.</p>
+                
+                <div id="notifyActionArea">
+                    <!-- Dynamic Rendered Box -->
+                </div>
+            </div>
+
+            <!-- Quantity Picker -->
+            <div class="qty-selector" id="qtySelector">
+                <label>Select Quantity:</label>
+                <div class="qty-input-box">
+                    <button class="qty-btn-btn" onclick="adjustDetailQty(-1)">-</button>
+                    <span class="qty-val" id="detailQtyVal">1</span>
+                    <button class="qty-btn-btn" onclick="adjustDetailQty(1)">+</button>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="detail-btn-group" id="detailBtnGroup">
+                <button class="btn-add-cart" id="addToCartBtn">🛒 Add to Cart</button>
+                <button class="btn-buy-now" id="buyNowBtn">⚡ Buy Now</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        let selectedQty = 1;
+
+        const pId = localStorage.getItem("productId") || "";
+        const pName = localStorage.getItem("productName") || "Authentic Spice";
+        const pPrice = Number(localStorage.getItem("productPrice")) || 100;
+        
+        // 🛠️ Image Fix: LocalStorage se image path lekar saare ajeeb characters saaf karna
+        let rawStoredImg = localStorage.getItem("productImage") || "";
+        let cleanImage = rawStoredImg ? rawStoredImg.replace(/[^\x20-\x7E]/g, '') : '';
+        if (cleanImage.includes("localhost:5000//")) {
+            cleanImage = cleanImage.replace("localhost:5000//", "localhost:5000/");
+        }
+
+        const pImage = (cleanImage && cleanImage !== "undefined" && cleanImage !== "null") 
+            ? cleanImage 
+            : "https://via.placeholder.com/380";
+
+        const pDesc = localStorage.getItem("productDescription") || "100% Pure and authentic home-ground spice.";
+        const pUsage = localStorage.getItem("productUsage") || "Ideal for all authentic Indian gravies, curries, and dal tadka.";
+        const pRecipe = localStorage.getItem("productRecipe") || "Add towards the end of cooking to preserve natural essential oils and aroma.";
+        const isOutOfStock = localStorage.getItem("productOutOfStock") === "true";
+
+        document.getElementById("detailTitle").innerText = pName;
+        document.getElementById("detailImg").src = pImage;
+        document.getElementById("detailDesc").innerText = pDesc;
+        document.getElementById("detailUsage").innerText = pUsage;
+        document.getElementById("detailRecipe").innerText = pRecipe;
+
+        // Weight Selector Setup
+        const weightSelect = document.getElementById("detailWeightSelect");
+        if (weightSelect) {
+            weightSelect.innerHTML = `
+                <option value="100g" data-price="${pPrice}">100g Pack - ₹${pPrice}</option>
+                <option value="250g" data-price="${Math.round(pPrice * 2.3)}">250g Pack - ₹${Math.round(pPrice * 2.3)}</option>
+                <option value="500g" data-price="${Math.round(pPrice * 4.2)}">500g Pack - ₹${Math.round(pPrice * 4.2)}</option>
+                <option value="1kg" data-price="${Math.round(pPrice * 8)}">1kg Pack - ₹${Math.round(pPrice * 8)}</option>
+            `;
+            
+            weightSelect.addEventListener("change", () => {
+                const selectedOpt = weightSelect.options[weightSelect.selectedIndex];
+                const price = selectedOpt.getAttribute("data-price");
+                document.getElementById("detailPrice").innerText = "₹" + price;
+            });
+        }
+
+        document.getElementById("detailPrice").innerText = "₹" + pPrice;
+
+        // 🔴 OUT OF STOCK HANDLING & SMART AUTO-DETECT NOTIFY BOX
+        if (isOutOfStock) {
+            document.getElementById("detailPrice").innerHTML += ' <span style="color:#d32f2f; font-size:16px; font-weight:bold; margin-left:10px;">(Out of Stock)</span>';
+            document.getElementById("detailBtnGroup").style.display = "none";
+            document.getElementById("qtySelector").style.display = "none";
+            document.getElementById("notifyBox").style.display = "block";
+
+            const currentUser = JSON.parse(localStorage.getItem("user"));
+            const actionArea = document.getElementById("notifyActionArea");
+            const userPhone = currentUser ? (currentUser.phone || currentUser.mobile || currentUser.phoneNumber || "") : "";
+
+            if (userPhone) {
+                actionArea.innerHTML = `
+                    <p style="font-size:13px; font-weight:bold; color:#2e7d32; margin-bottom:8px;">👤 Registered Number: ${userPhone}</p>
+                    <button onclick="submitNotifyRequest('${userPhone}')" style="background: #2e7d32; color: white; border: none; padding: 10px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%;">
+                        🔔 Notify Me on This Number
+                    </button>
+                `;
+            } else {
+                actionArea.innerHTML = `
+                    <div style="display: flex; gap: 8px;">
+                        <input type="tel" id="notifyPhone" placeholder="Enter your WhatsApp Number" style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;">
+                        <button onclick="submitNotifyRequest()" style="background: #0d47a1; color: white; border: none; padding: 8px 14px; border-radius: 4px; font-weight: bold; cursor: pointer;">🔔 Notify Me</button>
+                    </div>
+                `;
+            }
+        }
+
+        function adjustDetailQty(delta) {
+            if (isOutOfStock) return;
+            selectedQty += delta;
+            if (selectedQty < 1) selectedQty = 1;
+            document.getElementById("detailQtyVal").innerText = selectedQty;
+        }
+
+        async function submitNotifyRequest(autoPhone = null) {
+            let phoneToUse = autoPhone;
+            const inputEl = document.getElementById("notifyPhone");
+
+            if (!phoneToUse && inputEl) {
+                phoneToUse = inputEl.value;
+            }
+
+            if (!phoneToUse || phoneToUse.length < 10) {
+                return alert("Kripya valid 10-digit phone number dalein!");
+            }
+
+            if (!pId) {
+                return alert("Product ID missing! Kripya homepage par jaakar dobara product select karein.");
+            }
+
+            try {
+                const res = await fetch("https://maimasala-backend.onrender.com/api/notify/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        productId: pId,
+                        productName: pName,
+                        phone: phoneToUse
+                    })
+                });
+                const data = await res.json();
+                alert(data.message);
+                if (inputEl) inputEl.value = "";
+            } catch (err) {
+                alert("Server error connecting to notification system.");
+            }
+        }
+
+        const addToCartBtn = document.getElementById("addToCartBtn");
+        if (addToCartBtn && !isOutOfStock) {
+            addToCartBtn.onclick = function() {
+                const selectedOpt = weightSelect.options[weightSelect.selectedIndex];
+                const weightVal = selectedOpt.value;
+                const currentPrice = Number(selectedOpt.getAttribute("data-price"));
+                const itemFullName = `${pName} (${weightVal})`;
+
+                let cart = JSON.parse(localStorage.getItem("cart")) || [];
+                const existingIndex = cart.findIndex(item => item.name === itemFullName);
+
+                if (existingIndex > -1) {
+                    cart[existingIndex].qty += selectedQty;
+                } else {
+                    cart.push({ name: itemFullName, price: currentPrice, image: pImage, qty: selectedQty });
+                }
+
+                localStorage.setItem("cart", JSON.stringify(cart));
+                updateCartCount();
+                alert(`✅ ${selectedQty} x ${itemFullName} added to cart!`);
+            };
+        }
+
+        const buyNowBtn = document.getElementById("buyNowBtn");
+        if (buyNowBtn && !isOutOfStock) {
+            buyNowBtn.onclick = function() {
+                const selectedOpt = weightSelect.options[weightSelect.selectedIndex];
+                const weightVal = selectedOpt.value;
+                const currentPrice = Number(selectedOpt.getAttribute("data-price"));
+                const itemFullName = `${pName} (${weightVal})`;
+
+                localStorage.setItem("buyNow", JSON.stringify({ 
+                    name: itemFullName, price: currentPrice, image: pImage, qty: selectedQty 
+                }));
+                window.location.href = "checkout.html";
+            };
+        }
+    </script>
+</body>
+</html>

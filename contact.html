@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - MaiMasala</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .page-container { max-width: 900px; margin: 40px auto; padding: 30px; background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .page-title { color: #d32f2f; margin-bottom: 20px; font-size: 28px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .info-box { background: #f9f9f9; padding: 20px; border-radius: 8px; }
+        .info-item { margin-bottom: 15px; }
+        .info-item strong { color: #d32f2f; display: block; margin-bottom: 4px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 5px; }
+        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; }
+        .btn-submit { background: #d32f2f; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; }
+        @media (max-width: 768px) { .contact-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="nav-left">
+            <button class="hamburger-btn" onclick="toggleMenu()">☰</button>
+            <div class="logo">🌶️ MaiMasala</div>
+        </div>
+        <div class="nav-right">
+            <a href="cart.html" class="cart-btn-link">🛒 Cart (<span id="cartCount">0</span>)</a>
+        </div>
+
+        <div class="mobile-menu" id="mobileMenu">
+            <div class="menu-header">
+                <h3>🌶️ MaiMasala Menu</h3>
+                <button class="close-menu-btn" onclick="toggleMenu()">✕</button>
+            </div>
+            <ul class="menu-links">
+                <li><a href="index.html">🏠 Home</a></li>
+                <li><a href="orders.html">📦 My Orders</a></li>
+                <li><a href="cart.html">🛒 My Cart</a></li>
+                <li id="adminMenuLink" style="display: none;"><a href="admin.html">🔐 Admin Panel</a></li>
+                <hr>
+                <li><a href="about.html">ℹ️ About Us</a></li>
+                <li><a href="contact.html">📞 Contact Us</a></li>
+                <li><a href="terms.html">📜 Terms & Conditions</a></li>
+                <hr>
+                <li id="menuAuthSection"><a href="login.html">🔑 Login / Register</a></li>
+            </ul>
+        </div>
+        <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+    </header>
+
+    <div class="page-container">
+        <h1 class="page-title">Contact Us</h1>
+        <div class="contact-grid">
+            
+            <div class="info-box">
+                <h3>Get in Touch</h3>
+                <br>
+                <div class="info-item">
+                    <strong>📍 Store Address:</strong>
+                    MaiMasala Spices Private Limited, Main Market, Nagpur, Maharashtra - 440001
+                </div>
+                <div class="info-item">
+                    <strong>📞 Customer Support Phone:</strong>
+                    +91 98765 43210
+                </div>
+                <div class="info-item">
+                    <strong>📧 Email Support:</strong>
+                    support@maimasala.com
+                </div>
+                <div class="info-item">
+                    <strong>⏰ Working Hours:</strong>
+                    Mon - Sat: 9:00 AM - 8:00 PM
+                </div>
+            </div>
+
+            <form id="contactForm" onsubmit="handleContact(event)">
+                <h3>Send Us a Message</h3>
+                <br>
+                <div class="form-group">
+                    <label>Your Name</label>
+                    <input type="text" required placeholder="Enter name">
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" required placeholder="Enter email">
+                </div>
+                <div class="form-group">
+                    <label>Your Message</label>
+                    <textarea rows="4" required placeholder="Write your feedback or query..."></textarea>
+                </div>
+                <button type="submit" class="btn-submit">✉️ Send Message</button>
+            </form>
+
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        function handleContact(e) {
+            e.preventDefault();
+            alert("Thank you for reaching out! Our team will contact you shortly.");
+            document.getElementById("contactForm").reset();
+        }
+    </script>
+</body>
+</html>

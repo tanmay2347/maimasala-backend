@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - MaiMasala</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { background: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .orders-container { max-width: 900px; margin: 30px auto; padding: 0 20px; }
+        .order-card { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); display: flex; gap: 20px; align-items: center; border-left: 5px solid #d32f2f; }
+        .order-image { width: 90px; height: 90px; object-fit: cover; border-radius: 6px; }
+        .order-info { flex: 1; }
+        .order-status { font-weight: bold; padding: 4px 8px; border-radius: 4px; font-size: 12px; text-transform: uppercase; }
+        .pending { background: #fff3cd; color: #856404; }
+        .shipped { background: #cce5ff; color: #004085; }
+        .delivered { background: #d4edda; color: #155724; }
+        .cancelled { background: #f8d7da; color: #721c24; }
+        .cancel-btn { background: #d9534f; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-top: 8px; font-weight: bold; }
+        .search-box-card { background: white; padding: 15px 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="logo">🌶️ MaiMasala</div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="cart.html">Cart</a>
+        </div>
+    </header>
+
+    <div class="orders-container">
+        <h2>📦 Your Order History</h2>
+
+        <!-- Phone Search Card -->
+        <div class="search-box-card">
+            <label style="font-weight: bold; display: block; margin-bottom: 8px;">🔍 Search Orders by Mobile Number:</label>
+            <div style="display: flex; gap: 10px;">
+                <input type="tel" id="searchPhoneInput" placeholder="Enter registered mobile number" style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                <button onclick="loadOrdersByPhone()" style="background: #d32f2f; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer;">
+                    View Orders
+                </button>
+            </div>
+        </div>
+
+        <div id="ordersList">
+            <p>Loading your orders...</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const currentUser = JSON.parse(localStorage.getItem("user")) || {};
+            const savedPhone = localStorage.getItem("lastOrderPhone") || localStorage.getItem("savedPhone") || currentUser.phone || "";
+
+            if (savedPhone) {
+                document.getElementById("searchPhoneInput").value = savedPhone;
+                loadOrdersByPhone();
+            } else {
+                loadAllOrdersFallback();
+            }
+        });
+
+        // 1. Load Orders filtered by Phone Number
+        async function loadOrdersByPhone() {
+            const phoneVal = document.getElementById("searchPhoneInput").value.trim();
+            const ordersList = document.getElementById("ordersList");
+
+            if (!phoneVal) {
+                alert("Please enter a mobile number!");
+                return;
+            }
+
+            ordersList.innerHTML = "<p>Loading your orders...</p>";
+
+            try {
+                const res = await fetch(`https://maimasala-backend.onrender.com/api/orders/my-orders/${phoneVal}`);
+                const orders = await res.json();
+
+                renderOrders(orders, phoneVal);
+            } catch (err) {
+                console.error("Fetch error:", err);
+                loadAllOrdersFallback();
+            }
+        }
+
+        // 2. Fallback in case phone route is not used
+        async function loadAllOrdersFallback() {
+            const ordersList = document.getElementById("ordersList");
+            try {
+                const res = await fetch("https://maimasala-backend.onrender.com/api/orders");
+                const orders = await res.json();
+                renderOrders(orders, "");
+            } catch (err) {
+                ordersList.innerHTML = "<p style='color:red;'>Failed to load orders. Make sure backend is running on port 5000.</p>";
+            }
+        }
+
+        // 3. Render Orders List Logic
+        function renderOrders(orders, phoneSearch) {
+            const ordersList = document.getElementById("ordersList");
+
+            if (!orders || !orders.length) {
+                ordersList.innerHTML = `
+                    <div style="background:white; padding:30px; text-align:center; border-radius:8px;">
+                        <h3>📦 No Orders Found</h3>
+                        <p>${phoneSearch ? `Mobile number <strong>${phoneSearch}</strong> par koi order nahi mila.` : "You haven't placed any orders yet."} <a href="index.html" style="color:#d32f2f; font-weight:bold;">Start Shopping</a></p>
+                    </div>
+                `;
+                return;
+            }
+
+            ordersList.innerHTML = "";
+
+            orders.forEach(order => {
+                const productDetails = order.products ? order.products.map(p => `${p.name} (x${p.qty || 1})`).join(", ") : "Items";
+                
+                let firstImage = "https://via.placeholder.com/90";
+                if (order.products && order.products[0] && order.products[0].image) {
+                    firstImage = order.products[0].image.startsWith("http") 
+                        ? order.products[0].image 
+                        : `https://maimasala-backend.onrender.com/${order.products[0].image}`;
+                }
+
+                const orderStatus = order.status || 'Pending';
+                const statusClass = orderStatus.toLowerCase();
+                const orderIdShort = order._id.slice(-6).toUpperCase();
+                const orderDate = order.createdAt ? new Date(order.createdAt).toLocaleDateString("en-IN", { day: '2-digit', month: 'short', year: 'numeric' }) : "N/A";
+
+                ordersList.innerHTML += `
+                    <div class="order-card">
+                        <img src="${firstImage}" class="order-image" onerror="this.src='https://via.placeholder.com/90'">
+                        <div class="order-info">
+                            <h3>Order ID: #${orderIdShort}</h3>
+                            <p style="margin: 4px 0;"><strong>Items:</strong> ${productDetails}</p>
+                            <p style="margin: 4px 0;"><strong>Total:</strong> ₹${order.total} | <strong>Payment:</strong> ${order.paymentMethod || 'COD'} (${order.paymentStatus || 'Pending'})</p>
+                            <p style="margin: 4px 0;"><strong>Date:</strong> ${orderDate}</p>
+                            <p style="margin: 4px 0;">Status: <span class="order-status ${statusClass}">${orderStatus}</span></p>
+                            
+                            ${
+                                orderStatus === "Pending"
+                                ? `<button class="cancel-btn" onclick="cancelOrder('${order._id}')">❌ Cancel Order</button>`
+                                : ""
+                            }
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Cancel Order Handler
+        async function cancelOrder(id) {
+            if (!confirm("Are you sure you want to cancel this order?")) return;
+            try {
+                const res = await fetch(`https://maimasala-backend.onrender.com/api/orders/${id}/status`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ status: "Cancelled" })
+                });
+                if (res.ok) {
+                    alert("Order Cancelled Successfully!");
+                    loadOrdersByPhone();
+                }
+            } catch (err) {
+                alert("Error cancelling order.");
+            }
+        }
+    </script>
+</body>
+</html>

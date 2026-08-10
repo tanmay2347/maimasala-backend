@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaiMasala - Fresh Spices & Products</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .nav-right { display: flex; align-items: center; gap: 12px; }
+        .header-login-btn { background: #2e7d32; color: white; text-decoration: none; padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 13px; transition: background 0.2s; }
+        .header-login-btn:hover { background: #1b5e20; }
+        .header-user-badge { color: #ffe6e6; font-weight: bold; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+        .header-logout-btn { background: #ffffff; color: #d32f2f; border: none; padding: 4px 10px; border-radius: 4px; font-weight: bold; font-size: 12px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+   <!-- Header / Navbar -->
+<header class="navbar">
+    
+    <!-- TOP ROW: Hamburger (Left) & Logo (Right) -->
+    <div class="navbar-top">
+        <div class="nav-left">
+            <button class="hamburger-btn" id="menuToggleBtn" onclick="toggleMenu()">
+                ☰
+            </button>
+        </div>
+
+        <div class="logo">
+            <span>MaiMasala</span>
+            <img src="images/logo.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+        </div>
+    </div>
+
+    <!-- MIDDLE ROW: Search Box -->
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search masalas...">
+    </div>
+
+    <!-- BOTTOM ROW: Cart & Auth Buttons -->
+    <div class="navbar-bottom">
+        <a href="cart.html" class="cart-btn-link">
+            🛒 Cart (<span id="cartCount">0</span>)
+        </a>
+        <div class="nav-right" id="authSection"></div>
+    </div>
+
+    <!-- SLIDE-OUT / DROPDOWN MENU -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="menu-header">
+            <h3>MaiMasala Menu</h3>
+            <button class="close-menu-btn" onclick="toggleMenu()">✕</button>
+        </div>
+        <ul class="menu-links">
+            <li><a href="index.html">🏠 Home</a></li>
+            <li><a href="orders.html">📦 My Orders</a></li>
+            <li><a href="cart.html">🛒 My Cart</a></li>
+            <li id="adminMenuLink" style="display: none;">
+                <a href="admin.html" style="background: #f57c00; color: white;">🔐 Admin Panel</a>
+            </li>
+            <hr>
+            <li><a href="about.html">ℹ️ About Us</a></li>
+            <li><a href="contact.html">📞 Contact Us</a></li>
+            <li><a href="terms.html">📜 Terms & Conditions</a></li>
+            <hr>
+            <li id="menuAuthSection">
+                <a href="login.html" class="menu-login-btn">🔑 Login / Register</a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Background Overlay for Mobile Menu -->
+    <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+</header>
+    <!-- Banner Container -->
+    <section class="banner" id="heroBannerContainer">
+        <h1>100% Pure & Organic Spices</h1>
+        <p>Taste the authentic flavor of home-ground masalas.</p>
+    </section>
+
+    <!-- Product Grid Container -->
+    <main class="container">
+        <h2>Our Products</h2>
+        <div id="productContainer" class="product-grid">
+            <p>Loading products...</p>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

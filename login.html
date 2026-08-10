@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Register - MaiMasala</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+
+    <!-- Floating Spices Background Elements -->
+    <div class="spice-bg">
+        <span class="spice spice-1">🌶️</span>
+        <span class="spice spice-2">✨</span>
+        <span class="spice spice-3">🌿</span>
+        <span class="spice spice-4">🌶️</span>
+        <span class="spice spice-5">🍃</span>
+        <span class="spice spice-6">⭐</span>
+        <span class="spice spice-7">🌶️</span>
+    </div>
+
+    <div class="login-container">
+        <!-- Brand Header -->
+        <div class="login-brand">
+            <div class="brand-logo-wrapper">
+                <span class="logo-emoji">🌶️</span>
+            </div>
+            <h1>MaiMasala</h1>
+            <p>Taste the Authentic Flavor of Home-Ground Spices</p>
+        </div>
+
+        <!-- Toggle Tabs -->
+        <div class="tab-box">
+            <button class="tab-btn active" id="loginTab" onclick="switchTab('login')">Login</button>
+            <button class="tab-btn" id="signupTab" onclick="switchTab('signup')">Sign Up</button>
+            <div class="tab-indicator" id="tabIndicator"></div>
+        </div>
+
+        <!-- LOGIN FORM -->
+        <form id="loginForm" class="auth-form active">
+            <div class="input-group">
+                <input type="email" id="loginEmail" required placeholder=" ">
+                <label for="loginEmail">Email Address</label>
+                <span class="input-icon">📧</span>
+            </div>
+
+            <div class="input-group">
+                <input type="password" id="loginPassword" required placeholder=" ">
+                <label for="loginPassword">Password</label>
+                <span class="input-icon">🔒</span>
+            </div>
+
+            <button type="submit" class="btn-auth">
+                <span>Login to Flavor World</span>
+                <span class="btn-spice">🌶️</span>
+            </button>
+        </form>
+
+        <!-- SIGNUP FORM -->
+        <form id="signupForm" class="auth-form">
+            <div class="input-group">
+                <input type="text" id="signupName" required placeholder=" ">
+                <label for="signupName">Full Name</label>
+                <span class="input-icon">👤</span>
+            </div>
+
+            <div class="input-group">
+                <input type="email" id="signupEmail" required placeholder=" ">
+                <label for="signupEmail">Email Address</label>
+                <span class="input-icon">📧</span>
+            </div>
+
+            <div class="input-group">
+                <input type="password" id="signupPassword" required placeholder=" ">
+                <label for="signupPassword">Create Password</label>
+                <span class="input-icon">🔒</span>
+            </div>
+
+            <button type="submit" class="btn-auth">
+                <span>Create Account</span>
+                <span class="btn-spice">✨</span>
+            </button>
+        </form>
+
+        <div class="back-home">
+            <a href="index.html">← Back to Store</a>
+        </div>
+    </div>
+
+    <script src="js/login.js"></script>
+</body>
+</html>

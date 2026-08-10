@@ -1,0 +1,269 @@
+/* Custom Animated Spice Theme */
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #1a0202 0%, #3a0d0d 50%, #1a0202 100%);
+    overflow-x: hidden;
+    position: relative;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Floating Spices Animation */
+.spice-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.spice {
+    position: absolute;
+    font-size: 28px;
+    opacity: 0.25;
+    animation: floatSpice 12s infinite linear;
+}
+
+.spice-1 { top: 10%; left: 8%; animation-duration: 10s; font-size: 32px; }
+.spice-2 { top: 70%; left: 12%; animation-duration: 14s; font-size: 24px; }
+.spice-3 { top: 20%; left: 85%; animation-duration: 11s; font-size: 30px; }
+.spice-4 { top: 75%; left: 80%; animation-duration: 13s; font-size: 36px; }
+.spice-5 { top: 45%; left: 5%; animation-duration: 16s; font-size: 26px; }
+.spice-6 { top: 85%; left: 45%; animation-duration: 9s; font-size: 22px; }
+.spice-7 { top: 15%; left: 50%; animation-duration: 15s; font-size: 28px; }
+
+@keyframes floatSpice {
+    0% {
+        transform: translateY(0) rotate(0deg) scale(1);
+    }
+    50% {
+        transform: translateY(-30px) rotate(180deg) scale(1.15);
+    }
+    100% {
+        transform: translateY(0) rotate(360deg) scale(1);
+    }
+}
+
+/* Glassmorphism Card Box */
+.login-container {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 420px;
+    background: rgba(35, 10, 10, 0.75);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(220, 53, 69, 0.3);
+    border-radius: 20px;
+    padding: 35px 30px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(211, 47, 47, 0.2);
+    animation: cardAppear 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes cardAppear {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Header Logo */
+.login-brand {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.brand-logo-wrapper {
+    width: 65px;
+    height: 65px;
+    background: linear-gradient(135deg, #d32f2f, #f57c00);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 10px;
+    box-shadow: 0 0 20px rgba(211, 47, 47, 0.6);
+    animation: pulseLogo 3s infinite alternate;
+}
+
+@keyframes pulseLogo {
+    0% { transform: scale(1); box-shadow: 0 0 15px rgba(211, 47, 47, 0.5); }
+    100% { transform: scale(1.08); box-shadow: 0 0 25px rgba(245, 124, 0, 0.8); }
+}
+
+.logo-emoji {
+    font-size: 32px;
+}
+
+.login-brand h1 {
+    color: #ffffff;
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    letter-spacing: 1px;
+}
+
+.login-brand p {
+    color: #d1a3a3;
+    font-size: 13px;
+}
+
+/* Toggle Tabs */
+.tab-box {
+    position: relative;
+    display: flex;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 30px;
+    padding: 4px;
+    margin-bottom: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tab-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #bbb;
+    padding: 10px 0;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    z-index: 2;
+    transition: color 0.3s;
+}
+
+.tab-btn.active {
+    color: #ffffff;
+}
+
+.tab-indicator {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: calc(50% - 4px);
+    height: calc(100% - 8px);
+    background: linear-gradient(90deg, #d32f2f, #f57c00);
+    border-radius: 25px;
+    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    z-index: 1;
+}
+
+/* Form Switching Animation */
+.auth-form {
+    display: none;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: all 0.4s ease;
+}
+
+.auth-form.active {
+    display: block;
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Floating Label Inputs */
+.input-group {
+    position: relative;
+    margin-bottom: 22px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 14px 40px 14px 15px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    color: #fff;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.input-group label {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+    font-size: 14px;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+/* Float label on focus or filled */
+.input-group input:focus ~ label,
+.input-group input:not(:placeholder-shown) ~ label {
+    top: 0;
+    font-size: 11px;
+    background: #2a0808;
+    padding: 0 6px;
+    color: #f57c00;
+    border-radius: 4px;
+}
+
+.input-group input:focus {
+    border-color: #f57c00;
+    box-shadow: 0 0 10px rgba(245, 124, 0, 0.3);
+}
+
+.input-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    opacity: 0.6;
+}
+
+/* Submit Button */
+.btn-auth {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(135deg, #d32f2f, #e65100);
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 5px 15px rgba(211, 47, 47, 0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-auth:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(245, 124, 0, 0.5);
+}
+
+.btn-auth:active {
+    transform: translateY(0);
+}
+
+/* Back Link */
+.back-home {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.back-home a {
+    color: #d1a3a3;
+    text-decoration: none;
+    font-size: 13px;
+    transition: color 0.3s;
+}
+
+.back-home a:hover {
+    color: #f57c00;
+}

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - MaiMasala</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .checkout-container { max-width: 600px; margin: 30px auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 5px; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        .order-summary-box { background: #f9f9f9; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+        .btn-order { background: #d32f2f; color: white; border: none; padding: 12px; width: 100%; font-size: 18px; font-weight: bold; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="logo">🌶️ MaiMasala</div>
+        <div class="nav-links"><a href="cart.html">Back to Cart</a></div>
+    </header>
+
+    <div class="checkout-container">
+        <h2>📦 Delivery Details</h2>
+
+        <div class="order-summary-box">
+            <h3>Total Order Value: ₹<span id="checkoutTotal">0</span></h3>
+        </div>
+
+        <form id="checkoutForm">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="custName" placeholder="Enter your full name" required>
+            </div>
+
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" id="custPhone" placeholder="10-digit mobile number" required>
+            </div>
+
+            <div class="form-group">
+                <label>Delivery Address</label>
+                <textarea id="custAddress" rows="3" placeholder="House no, Street, City, Pincode" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Payment Method</label>
+                <select id="paymentMethod">
+                    <option value="COD">Cash on Delivery (COD)</option>
+                    <option value="Online">Online Payment (UPI/Card)</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn-order">🎉 Confirm Order</button>
+        </form>
+    </div>
+
+    <script>
+    // 1. Check Buy Now vs Cart Items
+    const buyNowItem = JSON.parse(localStorage.getItem("buyNow"));
+    const cartItems = JSON.parse(localStorage.getItem("cart")) || [];
+
+    let productsToOrder = [];
+    let grandTotal = 0;
+
+    if (buyNowItem) {
+        productsToOrder = [buyNowItem];
+        grandTotal = Number(buyNowItem.price) * Number(buyNowItem.qty || 1);
+    } else if (cartItems.length) {
+        productsToOrder = cartItems;
+        grandTotal = cartItems.reduce((acc, item) => acc + (Number(item.price) * Number(item.qty || 1)), 0);
+    }
+
+    document.getElementById("checkoutTotal").innerText = grandTotal;
+
+    if (!productsToOrder.length) {
+        alert("Your cart is empty!");
+        window.location.href = "index.html";
+    }
+
+    // 2. AUTO-FILL SAVED DETAILS
+    document.addEventListener("DOMContentLoaded", () => {
+        const savedUser = JSON.parse(localStorage.getItem("user")) || {};
+        const savedPhone = localStorage.getItem("savedPhone") || savedUser.phone || "";
+        const savedAddress = localStorage.getItem("savedAddress") || savedUser.address || "";
+
+        if (savedUser.name) document.getElementById("custName").value = savedUser.name;
+        if (savedPhone) document.getElementById("custPhone").value = savedPhone;
+        if (savedAddress) document.getElementById("custAddress").value = savedAddress;
+    });
+
+    // 3. SUBMIT ORDER
+    document.getElementById("checkoutForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById("custName").value.trim();
+        const phone = document.getElementById("custPhone").value.trim();
+        const address = document.getElementById("custAddress").value.trim();
+        const paymentMethod = document.getElementById("paymentMethod").value;
+
+        // Save phone & address for future auto-fill & order history lookups
+        localStorage.setItem("savedPhone", phone);
+        localStorage.setItem("lastOrderPhone", phone);
+        localStorage.setItem("savedAddress", address);
+
+        let user = JSON.parse(localStorage.getItem("user")) || {};
+        user.name = name;
+        user.phone = phone;
+        user.address = address;
+        localStorage.setItem("user", JSON.stringify(user));
+
+        let validUserId = null;
+        if (user._id && /^[0-9a-fA-F]{24}$/.test(user._id)) {
+            validUserId = user._id;
+        }
+
+        const orderPayload = {
+            user: validUserId,
+            customerName: name,
+            phone: phone,
+            address: address,
+            products: productsToOrder,
+            total: grandTotal,
+            paymentMethod: paymentMethod,
+            paymentStatus: paymentMethod === "Online" ? "Paid" : "Pending",
+            status: "Pending"
+        };
+
+        try {
+            const res = await fetch("https://maimasala-backend.onrender.com/api/orders", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(orderPayload)
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                alert("🎉 Order Placed Successfully!");
+                localStorage.removeItem("buyNow");
+                localStorage.removeItem("cart");
+                window.location.href = "orders.html";
+            } else {
+                alert("Order failed: " + (data.message || "Error placing order"));
+            }
+        } catch (err) {
+            console.error("Order error:", err);
+            alert("Server error while placing order.");
+        }
+    });
+    </script>
+</body>
+</html>

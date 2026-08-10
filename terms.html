@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms & Conditions - MaiMasala</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .page-container { max-width: 900px; margin: 40px auto; padding: 30px; background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .page-title { color: #d32f2f; margin-bottom: 20px; font-size: 28px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .terms-section { margin-bottom: 25px; }
+        .terms-section h3 { color: #222; margin-bottom: 8px; font-size: 18px; }
+        .terms-section p { color: #555; line-height: 1.6; font-size: 15px; }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="nav-left">
+            <button class="hamburger-btn" onclick="toggleMenu()">☰</button>
+            <div class="logo">🌶️ MaiMasala</div>
+        </div>
+        <div class="nav-right">
+            <a href="cart.html" class="cart-btn-link">🛒 Cart (<span id="cartCount">0</span>)</a>
+        </div>
+
+        <div class="mobile-menu" id="mobileMenu">
+            <div class="menu-header">
+                <h3>🌶️ MaiMasala Menu</h3>
+                <button class="close-menu-btn" onclick="toggleMenu()">✕</button>
+            </div>
+            <ul class="menu-links">
+                <li><a href="index.html">🏠 Home</a></li>
+                <li><a href="orders.html">📦 My Orders</a></li>
+                <li><a href="cart.html">🛒 My Cart</a></li>
+                <li id="adminMenuLink" style="display: none;"><a href="admin.html">🔐 Admin Panel</a></li>
+                <hr>
+                <li><a href="about.html">ℹ️ About Us</a></li>
+                <li><a href="contact.html">📞 Contact Us</a></li>
+                <li><a href="terms.html">📜 Terms & Conditions</a></li>
+                <hr>
+                <li id="menuAuthSection"><a href="login.html">🔑 Login / Register</a></li>
+            </ul>
+        </div>
+        <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+    </header>
+
+    <div class="page-container">
+        <h1 class="page-title">Terms & Conditions</h1>
+        
+        <div class="terms-section">
+            <h3>1. Introduction</h3>
+            <p>Welcome to MaiMasala. By accessing or using our website, you agree to comply with and be bound by these terms and conditions.</p>
+        </div>
+
+        <div class="terms-section">
+            <h3>2. Orders and Pricing</h3>
+            <p>All orders placed through our website are subject to availability and acceptance. Prices for products are listed in Indian Rupees (INR) and are inclusive of applicable taxes.</p>
+        </div>
+
+        <div class="terms-section">
+            <h3>3. Shipping and Delivery</h3>
+            <p>We aim to dispatch all orders within 24-48 hours. Estimated delivery timelines depend on customer location and logistics partners.</p>
+        </div>
+
+        <div class="terms-section">
+            <h3>4. Cancellation & Refund Policy</h3>
+            <p>Orders can be cancelled prior to dispatch through the "My Orders" section. In case of damaged or incorrect products received, customers can reach out to support@maimasala.com within 48 hours for replacement or refund.</p>
+        </div>
+
+        <div class="terms-section">
+            <h3>5. Privacy Policy</h3>
+            <p>Your personal data (Name, Phone Number, Address) is strictly stored for order processing and delivery purposes and will never be shared with unauthorized third parties.</p>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
