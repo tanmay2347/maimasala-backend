@@ -19,11 +19,41 @@ document.addEventListener("DOMContentLoaded", () => {
     if (addBannerForm) addBannerForm.addEventListener("submit", handleAddBanner);
 });
 
+// 🌟 TOAST NOTIFICATION FUNCTION (Alert ki jagah)
+function showToast(message, type = "success") {
+    const existingToast = document.getElementById("custom-toast");
+    if (existingToast) existingToast.remove();
+
+    const toast = document.createElement("div");
+    toast.id = "custom-toast";
+    toast.innerText = message;
+    
+    toast.style.position = "fixed";
+    toast.style.bottom = "20px";
+    toast.style.right = "20px";
+    toast.style.backgroundColor = type === "success" ? "#28a745" : "#dc3545";
+    toast.style.color = "#fff";
+    toast.style.padding = "12px 20px";
+    toast.style.borderRadius = "8px";
+    toast.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+    toast.style.zIndex = "10000";
+    toast.style.fontFamily = "sans-serif";
+    toast.style.fontSize = "14px";
+    toast.style.transition = "opacity 0.3s ease";
+
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+        toast.style.opacity = "0";
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
 // 1. ADMIN SECURITY CHECK
 function checkAdminAuth() {
     const currentUser = JSON.parse(localStorage.getItem("user"));
     if (!currentUser || currentUser.role !== "admin") {
-        alert("⛔ Access Denied! Only Admin can view this page.");
+        showToast("⛔ Access Denied! Only Admin can view this page", "error");
         window.location.href = "login.html";
     }
 }
@@ -113,7 +143,7 @@ function renderOrdersTable(ordersToRender) {
                     <th style="padding:8px;">Phone</th>
                     <th style="padding:8px;">Items</th>
                     <th style="padding:8px;">Total</th>
-                    <th style="padding:8px;">Payment</th> <!-- 👈 PAYMENT COLUMN ADDED HERE -->
+                    <th style="padding:8px;">Payment</th>
                     <th style="padding:8px;">Status</th>
                     <th style="padding:8px;">Actions</th>
                 </tr>
@@ -126,7 +156,6 @@ function renderOrdersTable(ordersToRender) {
         const orderDateFormatted = order.createdAt ? new Date(order.createdAt).toLocaleDateString("en-IN", { day: '2-digit', month: 'short', year: 'numeric' }) : "N/A";
         const orderIdShort = order._id.slice(-6).toUpperCase();
 
-        // 🟢 CHECK PAYMENT METHOD (ONLINE VS COD)
         const isOnlinePaid = order.paymentMethod === 'Online' || order.paymentStatus === 'Paid';
         const paymentBadge = isOnlinePaid 
             ? `<span style="background:#e8f5e9; color:#2e7d32; padding:3px 6px; border-radius:4px; font-weight:bold; font-size:11px;">🟢 Online (Paid)</span>` 
@@ -148,7 +177,7 @@ function renderOrdersTable(ordersToRender) {
                 <td style="padding:8px;">${order.phone}</td>
                 <td style="padding:8px;">${itemsStr}</td>
                 <td style="padding:8px;"><strong>₹${order.total}</strong></td>
-                <td style="padding:8px;">${paymentBadge}</td> <!-- 👈 RENDER PAYMENT BADGE HERE -->
+                <td style="padding:8px;">${paymentBadge}</td>
                 <td style="padding:8px;">
                     <select onchange="updateOrderStatus('${order._id}', this.value)" style="padding:4px; border-radius:4px; width: 100%;">
                         <option value="Pending" ${order.status === 'Pending' ? 'selected' : ''}>Pending</option>
@@ -173,16 +202,16 @@ function renderOrdersTable(ordersToRender) {
     container.innerHTML = tableHtml;
 }
 
-// 🏷️ ONE-CLICK BULK SHIPPING LABELS GENERATOR (4 LABELS PER A4 PAGE)
+// 🏷️ ONE-CLICK BULK SHIPPING LABELS GENERATOR
 window.generateBulkShippingLabels = function() {
     if (!allOrdersData || !allOrdersData.length) {
-        return alert("Shipping labels generate karne ke liye koi orders nahi hain!");
+        return showToast("Shipping labels generate karne ke liye koi orders nahi hain!", "error");
     }
 
     const activeOrders = allOrdersData.filter(o => o.status !== 'Cancelled');
 
     if (!activeOrders.length) {
-        return alert("Koi valid orders available nahi hain!");
+        return showToast("Koi valid orders available nahi hain!", "error");
     }
 
     const { jsPDF } = window.jspdf;
@@ -292,12 +321,13 @@ window.generateBulkShippingLabels = function() {
     });
 
     doc.save(`MaiMasala_Bulk_Shipping_Labels_${new Date().toISOString().split('T')[0]}.pdf`);
+    showToast("📦 Shipping labels downloaded successfully!", "success");
 };
 
 // 📋 COURIER DISPATCH MANIFEST SHEET GENERATOR
 window.generateCourierManifest = function() {
     if (!allOrdersData || !allOrdersData.length) {
-        return alert("Courier manifest generate karne ke liye koi orders nahi hain!");
+        return showToast("Courier manifest generate karne ke liye koi orders nahi hain!", "error");
     }
 
     const activeOrders = allOrdersData.filter(o => o.status !== 'Cancelled');
@@ -362,6 +392,7 @@ window.generateCourierManifest = function() {
     doc.text("Courier Signature / Seal: _______________________", 120, finalY + 20);
 
     doc.save(`Courier_Dispatch_Manifest_${new Date().toISOString().split('T')[0]}.pdf`);
+    showToast("📋 Courier manifest downloaded successfully!", "success");
 };
 
 // 5. LOAD CUSTOMER DIRECTORY & LTV
@@ -451,7 +482,7 @@ async function updateOrderStatus(orderId, newStatus) {
         });
 
         if (res.ok) {
-            alert("Order status updated to: " + newStatus);
+            showToast("Order status updated to: " + newStatus, "success");
             loadDashboardStats();
             loadProfitAnalytics();
 
@@ -470,7 +501,7 @@ async function updateOrderStatus(orderId, newStatus) {
             }
         }
     } catch (err) {
-        alert("Failed to update status");
+        showToast("Failed to update status", "error");
     }
 }
 
@@ -580,13 +611,13 @@ window.updateProductVariants = async function(productId) {
         });
 
         if (res.ok) {
-            alert("✅ Variant prices updated successfully!");
+            showToast("✅ Variant prices updated successfully!", "success");
             loadAdminProducts();
         } else {
-            alert("Failed to update variants.");
+            showToast("Failed to update variants.", "error");
         }
     } catch (err) {
-        alert("Server error while updating variant prices.");
+        showToast("Server error while updating variant prices.", "error");
     }
 };
 
@@ -597,7 +628,7 @@ window.updateProductStock = async function(productId) {
     const newStock = Number(inputEl.value);
 
     if (isNaN(newStock) || newStock < 0) {
-        alert("Please enter a valid stock number!");
+        showToast("Please enter a valid stock number!", "error");
         return;
     }
 
@@ -612,13 +643,13 @@ window.updateProductStock = async function(productId) {
         });
 
         if (res.ok) {
-            alert(`✅ Stock updated to ${newStock} packets!`);
+            showToast(`✅ Stock updated to ${newStock} packets!`, "success");
             loadAdminProducts();
         } else {
-            alert("Failed to update stock.");
+            showToast("Failed to update stock.", "error");
         }
     } catch (err) {
-        alert("Server error while updating stock.");
+        showToast("Server error while updating stock.", "error");
     }
 };
 
@@ -663,16 +694,16 @@ async function handleAddProduct(e) {
         });
 
         if (res.ok) {
-            alert("🌶️ New Product with Cost Price & Recipe Ideas Uploaded Successfully!");
+            showToast("🌶️ New Product Uploaded Successfully!", "success");
             document.getElementById("addProductForm").reset();
             loadDashboardStats();
             loadProfitAnalytics();
             loadAdminProducts();
         } else {
-            alert("Failed to upload product.");
+            showToast("Failed to upload product.", "error");
         }
     } catch (err) {
-        alert("Server error while uploading product.");
+        showToast("Server error while uploading product.", "error");
     }
 }
 
@@ -684,11 +715,11 @@ window.toggleStock = async function(id, outOfStock) {
             body: JSON.stringify({ outOfStock: outOfStock })
         });
         if (res.ok) {
-            alert(outOfStock ? "🔴 Marked as OUT OF STOCK" : "🟢 Marked as IN STOCK");
+            showToast(outOfStock ? "🔴 Marked as OUT OF STOCK" : "🟢 Marked as IN STOCK", "success");
             loadAdminProducts();
         }
     } catch (err) {
-        alert("Error changing stock status.");
+        showToast("Error changing stock status.", "error");
     }
 };
 
@@ -697,18 +728,18 @@ window.deleteProduct = async function(id) {
     try {
         const res = await fetch(`https://maimasala-backend.onrender.com/api/products/${id}`, { method: "DELETE" });
         if (res.ok) {
-            alert("Product deleted!");
+            showToast("Product deleted!", "success");
             loadDashboardStats();
             loadProfitAnalytics();
             loadAdminProducts();
         }
     } catch (err) {
-        alert("Error deleting product");
+        showToast("Error deleting product", "error");
     }
 };
 
 window.exportOrdersToExcel = function() {
-    if (!allOrdersData || !allOrdersData.length) return alert("Export karne ke liye koi orders nahi hain!");
+    if (!allOrdersData || !allOrdersData.length) return showToast("Export karne ke liye koi orders nahi hain!", "error");
     
     const excelData = allOrdersData.map(order => ({
         "Order Date": order.createdAt ? new Date(order.createdAt).toLocaleDateString("en-IN") : "N/A",
@@ -726,6 +757,7 @@ window.exportOrdersToExcel = function() {
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Customer Orders");
     XLSX.writeFile(workbook, `MaiMasala_Orders_${new Date().toISOString().split('T')[0]}.xlsx`);
+    showToast("📊 Orders exported successfully!", "success");
 };
 
 let previousOrderCount = null;
@@ -739,7 +771,7 @@ function checkNewOrdersNotification() {
             }
             if (orders.length > previousOrderCount) {
                 playNotificationBeep();
-                alert("🔔 NAYA ORDER AAYA HAI! Please check the orders list.");
+                showToast("🔔 NAYA ORDER AAYA HAI!", "success");
                 loadAdminOrders();
                 loadDashboardStats();
                 loadProfitAnalytics();
@@ -768,7 +800,7 @@ setInterval(checkNewOrdersNotification, 10000);
 
 window.downloadInvoice = function(orderId) {
     const order = allOrdersData.find(o => o._id === orderId);
-    if(!order) return alert("Order not found!");
+    if(!order) return showToast("Order not found!", "error");
 
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
@@ -844,6 +876,7 @@ window.downloadInvoice = function(orderId) {
     doc.text("Thank you for shopping authentic spices with MaiMasala!", 105, 280, null, null, "center");
 
     doc.save(`MaiMasala_Invoice_${orderIdShort}.pdf`);
+    showToast("📄 Invoice PDF downloaded successfully!", "success");
 };
 
 function renderAnalyticsCharts(orders) {
@@ -984,14 +1017,14 @@ async function handleAddBanner(e) {
         });
 
         if (res.ok) {
-            alert("🖼️ Banner Uploaded Successfully!");
+            showToast("🖼️ Banner Uploaded Successfully!", "success");
             document.getElementById("addBannerForm").reset();
             loadAdminBanners();
         } else {
-            alert("Failed to upload banner.");
+            showToast("Failed to upload banner.", "error");
         }
     } catch (err) {
-        alert("Server error uploading banner.");
+        showToast("Server error uploading banner.", "error");
     }
 }
 
@@ -1000,11 +1033,11 @@ window.deleteBanner = async function(id) {
     try {
         const res = await fetch(`https://maimasala-backend.onrender.com/api/banners/${id}`, { method: "DELETE" });
         if (res.ok) {
-            alert("Banner deleted!");
+            showToast("Banner deleted!", "success");
             loadAdminBanners();
         }
     } catch (err) {
-        alert("Error deleting banner.");
+        showToast("Error deleting banner.", "error");
     }
 };
 
@@ -1061,11 +1094,11 @@ window.toggleReviewStatus = async function(id, isApproved) {
         });
 
         if (res.ok) {
-            alert(isApproved ? "🟢 Review Approved for Public Website!" : "🔴 Review Unapproved");
+            showToast(isApproved ? "🟢 Review Approved for Public Website!" : "🔴 Review Unapproved", "success");
             loadAdminReviews();
         }
     } catch (err) {
-        alert("Error changing review status.");
+        showToast("Error changing review status.", "error");
     }
 };
 
@@ -1074,10 +1107,10 @@ window.deleteReview = async function(id) {
     try {
         const res = await fetch(`https://maimasala-backend.onrender.com/api/reviews/${id}`, { method: "DELETE" });
         if (res.ok) {
-            alert("Review deleted!");
+            showToast("Review deleted!", "success");
             loadAdminReviews();
         }
     } catch (err) {
-        alert("Error deleting review.");
+        showToast("Error deleting review.", "error");
     }
 };

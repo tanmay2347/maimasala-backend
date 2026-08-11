@@ -1,3 +1,33 @@
+// ================= TOAST NOTIFICATION FUNCTION =================
+function showToast(message, type = "success") {
+    const existingToast = document.getElementById("custom-toast");
+    if (existingToast) existingToast.remove();
+
+    const toast = document.createElement("div");
+    toast.id = "custom-toast";
+    toast.innerText = message;
+    
+    toast.style.position = "fixed";
+    toast.style.bottom = "20px";
+    toast.style.right = "20px";
+    toast.style.backgroundColor = type === "success" ? "#28a745" : "#dc3545";
+    toast.style.color = "#fff";
+    toast.style.padding = "12px 20px";
+    toast.style.borderRadius = "8px";
+    toast.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+    toast.style.zIndex = "10000";
+    toast.style.fontFamily = "sans-serif";
+    toast.style.fontSize = "14px";
+    toast.style.transition = "opacity 0.3s ease";
+
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+        toast.style.opacity = "0";
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
 // ================= CART COUNT UPDATE =================
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
@@ -27,9 +57,8 @@ if (productContainer) {
             }
 
             products.forEach(product => {
-                // 🛠️ Image URL Clean-up (Special character/corruption fix)
                 let rawImg = product.image ? product.image.replace(/\\/g, '/') : '';
-                rawImg = rawImg.replace(/[^\x20-\x7E]/g, ''); // Invisible/corrupted characters hatane ke liye
+                rawImg = rawImg.replace(/[^\x20-\x7E]/g, ''); 
                 const imageUrl = rawImg ? `https://maimasala-backend.onrender.com/${rawImg}` : 'https://via.placeholder.com/200';
 
                 const safeName = (product.name || '').replace(/'/g, "\\'");
@@ -40,7 +69,6 @@ if (productContainer) {
                 const isOutOfStock = product.outOfStock || (product.stock !== undefined && product.stock <= 0);
                 const stockQty = product.stock !== undefined ? Number(product.stock) : 10;
 
-                // 🟢 DYNAMIC WEIGHT VARIANTS DROPDOWN GENERATOR
                 let variantOptionsHtml = '';
                 let defaultPrice = product.price;
 
@@ -80,7 +108,6 @@ if (productContainer) {
 
                         <h3>${product.name}</h3>
 
-                        <!-- ⚖️ WEIGHT SELECTOR DROPDOWN -->
                         <div style="margin: 10px 0;" onclick="event.stopPropagation();">
                             <label style="font-size:12px; font-weight:bold; color:#555;">Select Pack Size:</label>
                             <select id="weightSelect_${product._id}" onchange="changeVariantPrice('${product._id}')" style="width: 100%; padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; margin-top: 4px;">
@@ -112,7 +139,6 @@ if (productContainer) {
         });
 }
 
-// 🟢 LIVE PRICE CHANGE ACCORDING TO WEIGHT SELECTION
 window.changeVariantPrice = function(productId) {
     const selectEl = document.getElementById(`weightSelect_${productId}`);
     const priceDisplay = document.getElementById(`priceDisplay_${productId}`);
@@ -157,6 +183,16 @@ window.openProduct = function(id, name, price, image, description, outOfStock, s
 
 // 🟢 ADD TO CART WITH SELECTED WEIGHT & PRICE
 window.addToCartVariant = function(productId, name, image) {
+    // 🔴 Login Check Before Adding to Cart
+    const token = localStorage.getItem("token") || JSON.parse(localStorage.getItem("user"));
+    if (!token) {
+        showToast("🔒 Please login first to add items!", "error");
+        setTimeout(() => {
+            window.location.href = "login.html";
+        }, 1000);
+        return;
+    }
+
     const selectEl = document.getElementById(`weightSelect_${productId}`);
     const selectedOption = selectEl ? selectEl.options[selectEl.selectedIndex] : null;
 
@@ -183,11 +219,21 @@ window.addToCartVariant = function(productId, name, image) {
     localStorage.setItem("cart", JSON.stringify(currentCart));
     cart = currentCart;
     updateCartCount();
-    alert(`✅ ${itemFullName} added to cart!`);
+    showToast(`✅ ${itemFullName} added to cart!`, "success");
 };
 
 // 🟢 BUY NOW WITH SELECTED WEIGHT
 window.buyNowVariant = function(productId, name, image) {
+    // 🔴 Login Check Before Buy Now
+    const token = localStorage.getItem("token") || JSON.parse(localStorage.getItem("user"));
+    if (!token) {
+        showToast("🔒 Please login first to purchase!", "error");
+        setTimeout(() => {
+            window.location.href = "login.html";
+        }, 1000);
+        return;
+    }
+
     const selectEl = document.getElementById(`weightSelect_${productId}`);
     const selectedOption = selectEl ? selectEl.options[selectEl.selectedIndex] : null;
 
@@ -271,11 +317,12 @@ function checkUserLogin() {
 }
 
 window.userLogout = function() {
-    if (confirm("Are you sure you want to logout?")) {
-        localStorage.removeItem("user");
-        alert("Logged out successfully!");
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    showToast("Logged out successfully!", "success");
+    setTimeout(() => {
         window.location.reload();
-    }
+    }, 1000);
 };
 
 document.addEventListener("DOMContentLoaded", checkUserLogin);
