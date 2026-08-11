@@ -18,32 +18,28 @@
    <!-- Header / Navbar -->
 <header class="navbar">
     
-    <!-- TOP ROW: Hamburger (Left) & Logo (Right) -->
+    <!-- TOP ROW: Hamburger & Logo (Left) and Cart & Auth (Right) -->
     <div class="navbar-top">
         <div class="nav-left">
             <button class="hamburger-btn" id="menuToggleBtn" onclick="toggleMenu()">
                 ☰
             </button>
-        </div>
-
-    
             <div class="logo">
                 <span>MaiMasala</span>
-                <!-- <img src="images/logo.png.jpeg" alt="MaiMasale Logo" style="height: 40px; width: auto;">
-            </div> -->
+            </div>
+        </div>
+
+        <div class="navbar-bottom-right">
+            <a href="cart.html" class="cart-btn-link">
+                🛒 Cart (<span id="cartCount">0</span>)
+            </a>
+            <div class="nav-right" id="authSection"></div>
+        </div>
     </div>
 
-    <!-- MIDDLE ROW: Search Box -->
+    <!-- BOTTOM ROW: Search Box -->
     <div class="search-box">
         <input type="text" id="searchInput" placeholder="Search masalas...">
-    </div>
-
-    <!-- BOTTOM ROW: Cart & Auth Buttons -->
-    <div class="navbar-bottom">
-        <a href="cart.html" class="cart-btn-link">
-            🛒 Cart (<span id="cartCount">0</span>)
-        </a>
-        <div class="nav-right" id="authSection"></div>
     </div>
 
     <!-- SLIDE-OUT / DROPDOWN MENU -->
@@ -73,6 +69,7 @@
     <!-- Background Overlay for Mobile Menu -->
     <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
 </header>
+
     <!-- Banner Container -->
     <section class="banner" id="heroBannerContainer">
         <h1>100% Pure & Organic Spices</h1>
