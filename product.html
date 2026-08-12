@@ -60,8 +60,7 @@
             <button class="hamburger-btn" onclick="toggleMenu()">☰</button>
             <div class="logo">
                 <span>MaiMasala</span>
-                <!-- <img src="images/logo.png.jpeg" alt="MaiMasale Logo" style="height: 40px; width: auto;">
-            </div> -->
+            </div>
         </div>
         <div class="nav-right">
             <a href="cart.html" class="cart-btn-link">🛒 Cart (<span id="cartCount">0</span>)</a>
@@ -131,11 +130,14 @@
         const pName = localStorage.getItem("productName") || "Authentic Spice";
         const pPrice = Number(localStorage.getItem("productPrice")) || 100;
         
-        // 🛠️ Image Fix: LocalStorage se image path lekar saare ajeeb characters saaf karna
+        // 🛠️ Robust Image Path Corrector
         let rawStoredImg = localStorage.getItem("productImage") || "";
-        let cleanImage = rawStoredImg ? rawStoredImg.replace(/[^\x20-\x7E]/g, '') : '';
-        if (cleanImage.includes("localhost:5000//")) {
-            cleanImage = cleanImage.replace("localhost:5000//", "localhost:5000/");
+        let cleanImage = rawStoredImg ? rawStoredImg.replace(/[^\x20-\x7E]/g, '').trim() : '';
+        
+        if (cleanImage.startsWith("uploads/")) {
+            cleanImage = `https://maimasala-backend.onrender.com/${cleanImage}`;
+        } else if (cleanImage && !cleanImage.startsWith("http")) {
+            cleanImage = `https://maimasala-backend.onrender.com/uploads/${cleanImage}`;
         }
 
         const pImage = (cleanImage && cleanImage !== "undefined" && cleanImage !== "null") 
@@ -172,7 +174,7 @@
 
         document.getElementById("detailPrice").innerText = "₹" + pPrice;
 
-        // 🔴 OUT OF STOCK HANDLING & SMART AUTO-DETECT NOTIFY BOX
+        // 🔴 OUT OF STOCK HANDLING
         if (isOutOfStock) {
             document.getElementById("detailPrice").innerHTML += ' <span style="color:#d32f2f; font-size:16px; font-weight:bold; margin-left:10px;">(Out of Stock)</span>';
             document.getElementById("detailBtnGroup").style.display = "none";
