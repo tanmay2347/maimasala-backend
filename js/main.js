@@ -58,7 +58,8 @@ if (productContainer) {
 
             products.forEach(product => {
                 let rawImg = product.image ? product.image.replace(/\\/g, '/') : '';
-                rawImg = rawImg.replace(/[^\x20-\x7E]/g, ''); 
+                // Fix leading slashes if any
+                rawImg = rawImg.startsWith('/') ? rawImg.substring(1) : rawImg;
                 const imageUrl = rawImg ? `https://maimasala-backend.onrender.com/${rawImg}` : 'https://via.placeholder.com/200';
 
                 const safeName = (product.name || '').replace(/'/g, "\\'");
@@ -163,27 +164,22 @@ if (searchInput) {
 
 // ================= OPEN PRODUCT DETAIL =================
 window.openProduct = function(id, name, price, image, description, outOfStock, stock, usage, recipe) {
-    let cleanImage = image ? image.replace(/[^\x20-\x7E]/g, '') : '';
-    if (cleanImage.includes("localhost:5000//")) {
-        cleanImage = cleanImage.replace("localhost:5000//", "localhost:5000/");
-    }
-
     localStorage.setItem("productId", id);
     localStorage.setItem("productName", name);
     localStorage.setItem("productPrice", price);
-    localStorage.setItem("productImage", cleanImage);
+    localStorage.setItem("productImage", image);
     localStorage.setItem("productDescription", description);
     localStorage.setItem("productOutOfStock", outOfStock ? "true" : "false");
     localStorage.setItem("productStockCount", stock || 0);
     localStorage.setItem("productUsage", usage || "Best for authentic Indian cooking.");
     localStorage.setItem("productRecipe", recipe || "Add while frying spices to release natural aroma.");
     
+    // Check if your details page is product.html or product-details.html
     window.location.href = "product.html";
 };
 
 // 🟢 ADD TO CART WITH SELECTED WEIGHT & PRICE
 window.addToCartVariant = function(productId, name, image) {
-    // 🔴 Login Check Before Adding to Cart
     const token = localStorage.getItem("token") || JSON.parse(localStorage.getItem("user"));
     if (!token) {
         showToast("🔒 Please login first to add items!", "error");
@@ -224,7 +220,6 @@ window.addToCartVariant = function(productId, name, image) {
 
 // 🟢 BUY NOW WITH SELECTED WEIGHT
 window.buyNowVariant = function(productId, name, image) {
-    // 🔴 Login Check Before Buy Now
     const token = localStorage.getItem("token") || JSON.parse(localStorage.getItem("user"));
     if (!token) {
         showToast("🔒 Please login first to purchase!", "error");
